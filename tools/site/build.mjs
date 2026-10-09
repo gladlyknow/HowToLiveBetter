@@ -370,6 +370,8 @@ for (const f of ['README.md', 'og.png', 'LICENSE', 'LICENSE-CODE']) {
   const src = resolve(ROOT, f);
   if (existsSync(src)) copyFileSync(src, join(OUT, f));
 }
+// 站点共享样式：首页/章节页/404 都引 https://…/styles.css，漏拷则全站裸奔
+copyFileSync(resolve(ROOT, 'site/styles.css'), join(OUT, 'styles.css'));
 copyFileSync(resolve(ROOT, '.nojekyll'), join(OUT, '.nojekyll'));
 for (const dir of ['book', 'docs', 'ads', 'skills']) {
   const src = resolve(ROOT, dir);
@@ -448,6 +450,10 @@ for (const ch of chapters) {
 }
 const homeOut = readFileSync(join(OUT, 'index.html'), 'utf8');
 if (!/application\/ld\+json/.test(homeOut)) errors.push('首页缺 JSON-LD');
+// 首页/章节页引用的站内资源必须真实存在，漏拷任何一个都是线上裸奔
+for (const asset of ['styles.css', 'og.png', 'ads/mcyyy-side.webp', 'ads/wechat-reward.png']) {
+  if (!existsSync(join(OUT, asset))) errors.push(`_site 缺资源 ${asset}（构建脚本没拷）`);
+}
 if (errors.length) {
   console.error('构建校验发现问题：');
   for (const e of errors) console.error(' - ' + e);
