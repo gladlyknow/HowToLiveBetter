@@ -26,10 +26,15 @@ const corpus = {
 const corpusJson = JSON.stringify(corpus).replace(/<\/script/gi, '<\\/script');
 
 // ---------- 页面 ----------
-let html = read('index.html');
+// 检索应用源文件已移到 site/search.html（站点多页化后 index.html 是新首页），
+// 离线单文件仍以检索应用为外壳。源里的 <base href="/"> 是给线上 /search/ 用的，
+// 离线打开文件协议下会指错地方，剥掉（下面的改写已把站内相对链接换成线上地址）。
+let html = read('site/search.html');
 const must = (needle, label) => {
-  if (!html.includes(needle)) throw new Error(`index.html 里找不到${label}，离线版脚本要跟着改：${needle}`);
+  if (!html.includes(needle)) throw new Error(`site/search.html 里找不到${label}，离线版脚本要跟着改：${needle}`);
 };
+must('<base href="/">', ' <base> 标签');
+html = html.replace('<base href="/">', '');
 
 // 统计脚本不能跟着离线版走：别人双击打开的副本不该往外发请求，断网时还要等超时
 const GA_START = '<!-- ga:start', GA_END = '<!-- ga:end -->';

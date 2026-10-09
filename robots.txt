@@ -1,4 +1,16 @@
+# 所有常规爬虫
 User-agent: *
 Allow: /
 
-Sitemap: https://eternity4719.github.io/HowToLiveBetter/sitemap.xml
+# AI 爬虫与生成式引擎爬虫（GEO）：全部放行
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
+User-agent: ClaudeBot
+User-agent: Claude-Web
+User-agent: Google-Extended
+User-agent: PerplexityBot
+Allow: /
+
+Sitemap: https://howtolivebetter.dev/sitemap.xml
+# 站点面向 LLM 的介绍：https://howtolivebetter.dev/llms.txt

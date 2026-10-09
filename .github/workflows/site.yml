@@ -1,0 +1,47 @@
+# 站点构建校验：静态站（site/ 模板 + tools/site/build.mjs -> _site/）构建要能过。
+# 只校验不部署——部署走 Cloudflare Pages 的 Git 集成，push 到 main 后 CF 自动构建上线。
+# 正文一改，章节页和首页跟着变，所以这个校验跟着正文的改动跑。
+name: 站点构建校验
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - README.md
+      - book/**
+      - docs/**
+      - ads/**
+      - site/**
+      - tools/site/**
+      - tools/lib/**
+      - tools/offline/**
+      - robots.txt
+      - .github/workflows/site.yml
+  pull_request:
+    paths:
+      - README.md
+      - book/**
+      - docs/**
+      - ads/**
+      - site/**
+      - tools/site/**
+      - tools/lib/**
+      - tools/offline/**
+      - robots.txt
+      - .github/workflows/site.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: 构建 _site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node tools/site/build.mjs
+      - run: node tools/check-refs.mjs --check
